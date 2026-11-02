@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#07060f">
+<title>Rifted</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at 50% 45%, #211044 0%, transparent 48%),
+    #07060f;
+  color: white;
+  font-family: 'Noto Sans', sans-serif;
+}
+
+.orb {
+  position: fixed;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: .23;
+  pointer-events: none;
+  animation: float 9s ease-in-out infinite alternate;
+}
+
+.o1 {
+  background: #742cff;
+  top: -180px;
+  left: -100px;
+}
+
+.o2 {
+  background: #174dff;
+  bottom: -220px;
+  right: -100px;
+  animation-delay: -4s;
+}
+
+@keyframes float {
+  to { transform: translate(60px, 50px) scale(1.15); }
+}
+
+main {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 24px;
+  text-align: center;
+}
+
+.brand {
+  margin: 0 0 30px;
+}
+
+.brand img {
+  display: block;
+  width: min(680px, 92vw, 58vh);
+  height: auto;
+  filter: drop-shadow(0 0 35px #8b35ff55);
+}
+
+.pobierz {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 190px;
+  padding: 15px 42px;
+  border-radius: 999px;
+  color: white;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: .3px;
+  background: linear-gradient(110deg, #7135ee, #a13df5);
+  box-shadow: 0 0 35px #843cff66;
+  transition: transform .2s, box-shadow .2s;
+}
+
+.pobierz:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 48px #984cffaa;
+}
+
+.note {
+  margin-top: 22px;
+  color: #858092;
+  font-size: 12px;
+}
+
+.note a {
+  color: #b7a0e8;
+  text-decoration: none;
+}
+
+@media (max-height: 500px) {
+  .brand img { width: min(400px, 65vw); }
+  .brand { margin-bottom: 15px; }
+}
+</style>
+</head>
+
+<body>
+<div class="orb o1"></div>
+<div class="orb o2"></div>
+
+<main>
+  <h1 class="brand">
+    <img src="https://rifted-pobierz.surge.sh/logo-b.png" alt="Rifted">
+  </h1>
+
+  <a class="pobierz" id="pobierz"
+     href="https://github.com/Kubiaczekk/Rifted-desktop/releases/download/v0.1.2/Rifted_0.1.2_x64-setup.exe">
+    Pobierz
+  </a>
+
+  <p class="note">
+    Windows · .exe — contact
+    <a href="mailto:czystekontorazdwa12@gmail.com">czystekontorazdwa12@gmail.com</a>
+  </p>
+</main>
+
+<script>
+const button = document.getElementById('pobierz');
+const fallback = button.href;
+
+async function findLatestInstaller() {
+  try {
+    const response = await fetch(
+      'https://api.github.com/repos/Kubiaczekk/Rifted-desktop/releases'
+    );
+    if (!response.ok) return fallback;
+
+    const releases = await response.json();
+
+    for (const release of releases) {
+      const asset = release.assets?.find(item =>
+        item.name.toLowerCase().endsWith('x64-setup.exe') &&
+        item.browser_download_url.includes('/releases/download/')
+      );
+      if (asset) return asset.browser_download_url;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+  return fallback;
+}
+
+findLatestInstaller().then(url => {
+  button.href = url;
+});
+</script>
+</body>
+</html>
